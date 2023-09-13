@@ -31,7 +31,13 @@ export const GoodsItem = ({ caption, amount, id }) => {
   };
 
   const changeHandler = ({ target: { value, type } }) => {
-    type === "text" ? setCaptionText(value) : setAmountValue(value);
+    if (type === "text") {
+      const regEx = /^[a-zA-Z]+$/g;
+
+      regEx.test(value) && setCaptionText(value);
+    } else {
+      setAmountValue(value);
+    }
   };
 
   return (
