@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 
 const localStorage = window.localStorage;
 
-const reducer = (state = [], action) => {
+const reducer = (state, action) => {
   switch (action.type) {
     case "addGoods": {
       return [...state, action.payload];
@@ -32,7 +32,7 @@ const reducer = (state = [], action) => {
 const localeData = JSON.parse(localStorage.getItem("shopState"));
 const isLocalDataExist = localeData !== null;
 
-export const store = createStore(reducer, isLocalDataExist ? localeData : []);
+const store = createStore(reducer, isLocalDataExist ? localeData : []);
 
 store.subscribe(() => {
   const stringifyedState = JSON.stringify(store.getState());

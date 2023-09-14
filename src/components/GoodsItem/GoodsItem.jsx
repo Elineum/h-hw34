@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { store } from "../../store/StoreProvider.jsx";
 import { useDispatch } from "react-redux";
 import "./GoodsItem.scss";
+import { isValueValid } from "../../utils/isValueValid";
 
 export const GoodsItem = ({ caption, amount, id }) => {
   const [isEditMode, setEditMode] = useState(false);
@@ -10,7 +10,7 @@ export const GoodsItem = ({ caption, amount, id }) => {
   const dispatch = useDispatch();
 
   const deleteHandler = () => {
-    store.dispatch({
+    dispatch({
       type: "removeGoods",
       payload: {
         id,
@@ -20,23 +20,21 @@ export const GoodsItem = ({ caption, amount, id }) => {
 
   const editHandler = () => {
     setEditMode(!isEditMode);
-    dispatch({
-      type: "editGoods",
-      payload: {
-        id,
-        caption: captionText,
-        amount: amountValue,
-      },
-    });
+
+    isEditMode &&
+      dispatch({
+        type: "editGoods",
+        payload: {
+          id,
+          caption: captionText,
+          amount: amountValue,
+        },
+      });
   };
 
-  const changeHandler = ({ target: { value, type } }) => {
-    if (type === "text") {
-      const regEx = /^[a-zA-Z]+$/g;
-
-      regEx.test(value) && setCaptionText(value);
-    } else {
-      setAmountValue(value);
+  const changeHandler = ({ target: { value, name } }) => {
+    if (isValueValid({ value, name })) {
+      name === "caption" ? setCaptionText(value) : setAmountValue(value);
     }
   };
 
@@ -49,20 +47,20 @@ export const GoodsItem = ({ caption, amount, id }) => {
             onChange={changeHandler}
             value={captionText}
             className="goods-item__input"
+            name="caption"
           />
         ) : (
-          <span>{captionText}</span>
+          <span>{captionText.trim()}</span>
         )}
       </div>
       <div className="goods-item__amount">
         {isEditMode ? (
           <input
             type="number"
-            min={1}
-            max={100000}
             onChange={changeHandler}
             value={amountValue}
             className="goods-item__input"
+            name="amount"
           />
         ) : (
           <span>x{amountValue}</span>
